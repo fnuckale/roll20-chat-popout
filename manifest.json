@@ -3,12 +3,6 @@
     "name": "Roll20 Popout Chat",
     "version": "0.1",
     "description": "Pops out Roll20's chat window.",
-    "permissions": ["scripting", "tabs"],
-    "host_permissions": ["*://*/*"],
-    "background": {
-        "service_worker": "js/background.js",
-        "type": "module"
-    },
     "content_scripts": [
         {
             "js": ["js/content.js"],

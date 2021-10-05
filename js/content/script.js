@@ -6,10 +6,11 @@ let initialized,
     textArea,
     popup;
 
-document.addEventListener("ready:r20poc", initialize);
+initialize();
 
-function initialize() {
+async function initialize() {
     if (!initialized) {
+        await jQueryIsAvailable();
         initialized = true;
         textChat = document.getElementById("textchat");
         textChatTab = document.getElementById("textchattab");
@@ -24,10 +25,10 @@ function initialize() {
     }
 }
 
-function openPopup() {
+async function openPopup() {
     if (!popup || popup.closed) {
-        popup = window.allChildWindows[window.allChildWindows.length - 1];
-        let onLoad = popup.onload,
+        popup = await getPopupWindow(window.allChildWindows);
+        const onLoad = popup.onload,
             onBeforeUnload = popup.onbeforeunload;
 
         popup.onload = () => {
@@ -35,7 +36,7 @@ function openPopup() {
             popup.onbeforeunload = onBeforeUnload;
 
             // Dressing
-            let doc = popup.document;
+            const doc = popup.document;
 
             doc.title = getTitle();
             doc.head.prepend(getResetStyle());
@@ -56,7 +57,7 @@ function openPopup() {
                     "hover",
                     ".showtip:not([original-title]),.userscript-showtip:not([original-title])",
                     function (e) {
-                        let $el = $(e.target),
+                        const $el = $(e.target),
                             isUserScript = $el.hasClass("userscript-showtip");
                         $el.tipsy({
                             html: true,
@@ -76,8 +77,42 @@ function openPopup() {
     }
 }
 
+function getPopupWindow(source) {
+    return new Promise((resolve) => {
+        let chatPopup = source.filter((w) => w.name == "ChatPopout")[0];
+
+        if (chatPopup) {
+            resolve(chatPopup);
+        } else {
+            const push = source.push.bind(source);
+            source.push = (...args) => {
+                chatPopup = args.filter((w) => w.name == "ChatPopout")[0];
+
+                push(...args);
+
+                if (chatPopup) {
+                    source.push = push;
+                    resolve(chatPopup);
+                }
+            };
+        }
+    });
+}
+
+function jQueryIsAvailable() {
+    return new Promise((resolve) => {
+        if (window.$) {
+            resolve();
+        } else {
+            setTimeout(() => {
+                jQueryIsAvailable().then(resolve);
+            }, 100);
+        }
+    });
+}
+
 function getResetStyle() {
-    let style = document.createElement("style");
+    const style = document.createElement("style");
     style.setAttribute("type", "text/css");
     style.innerText =
         "table { border-collapse: inherit; text-indent: inherit; white-space: inherit; line-height: inherit; font-weight: inherit; font-size: inherit; font-style: inherit; color: inherit; text-align: inherit; border-spacing: inherit; font-variant: inherit; }";
@@ -85,7 +120,7 @@ function getResetStyle() {
 }
 
 function getPopupStyle() {
-    let style = document.createElement("style");
+    const style = document.createElement("style");
     style.setAttribute("type", "text/css");
     style.innerText =
         "#containerdiv { padding: 0; } #textchat { border-radius: 0; } #textchat-input { left: 0; padding: 5px; box-sizing: border-box; } #textchat-input textarea { width: 100% !important; height: 60px; box-sizing: border-box; }";
@@ -93,10 +128,7 @@ function getPopupStyle() {
 }
 
 function getTitle() {
-    let [titleEl] = document.getElementsByTagName("title");
-    return titleEl
-        ? titleEl.innerText.replace("Roll20", "Roll20 Chat")
-        : "Roll20 Chat";
+    return (document.title || "Roll20").replace("Roll20", "Roll20 Chat");
 }
 
 function isAdvShortcuts() {

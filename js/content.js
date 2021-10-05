@@ -1,3 +1,5 @@
-let s = document.createElement("script");
+const s = document.createElement("script");
+s.type = "text/javascript";
 s.src = chrome.runtime.getURL("js/content/script.js");
-(document.head || document.documentElement).appendChild(s);
+s.onload = () => s.remove();
+document.head.appendChild(s);
