@@ -132,5 +132,5 @@ function getTitle() {
 }
 
 function isAdvShortcuts() {
-    return Campaign.players.get(window.d20_player_id).attributes.advShortcuts;
+    return window.currentPlayer.get("advShortcuts");
 }
