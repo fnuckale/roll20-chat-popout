@@ -6,7 +6,14 @@
     "content_scripts": [
         {
             "js": ["js/content.js"],
-            "matches": ["https://app.roll20.net/editor/*"]
+            "matches": [
+                "https://app.roll20.net/editor",
+                "https://app.roll20.net/editor/",
+                "https://app.roll20.net/editor/#*",
+                "https://app.roll20.net/editor#*",
+                "https://app.roll20.net/editor/?*",
+                "https://app.roll20.net/editor?*"
+            ]
         }
     ],
     "web_accessible_resources": [
