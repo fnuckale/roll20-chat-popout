@@ -132,9 +132,5 @@ function getTitle() {
 }
 
 function isAdvShortcuts() {
-    try {
-        return !Mousetrap.stopCallback();
-    } catch (e) {
-        return true;
-    }
+    return Campaign.players.get(window.d20_player_id).attributes.advShortcuts;
 }
