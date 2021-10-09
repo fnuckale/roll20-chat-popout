@@ -1,9 +1,11 @@
 let initialized,
+    rightSideBar,
     textChatTab,
     textChatTabButton,
     textChat,
     textChatInput,
     textArea,
+    fakeTextArea,
     popup;
 
 initialize();
@@ -12,6 +14,7 @@ async function initialize() {
     if (!initialized) {
         await jQueryIsAvailable();
         initialized = true;
+        rightSideBar = document.getElementById("rightsidebar");
         textChat = document.getElementById("textchat");
         textChatTab = document.getElementById("textchattab");
 
@@ -33,7 +36,10 @@ async function openPopup() {
 
         popup.onload = () => {
             onLoad();
-            popup.onbeforeunload = onBeforeUnload;
+            popup.onbeforeunload = () => {
+                onBeforeUnload();
+                destroyFakeTextArea();
+            };
 
             // Dressing
             const doc = popup.document;
@@ -71,6 +77,9 @@ async function openPopup() {
             if (textChatTab.classList.contains("ui-state-active")) {
                 textChatTab.nextElementSibling.children[0].click();
             }
+
+            // Allow blurring missing element
+            attachFakeTextArea();
         };
 
         popup.onbeforeunload = null;
@@ -109,6 +118,21 @@ function jQueryIsAvailable() {
             }, 100);
         }
     });
+}
+
+function destroyFakeTextArea() {
+    fakeTextArea.remove();
+    fakeTextArea = null;
+}
+
+function attachFakeTextArea() {
+    const textArea = document.createElement("textarea"),
+        wrapper = document.createElement("div");
+    wrapper.id = "textchat-input";
+    wrapper.style.display = "none";
+    wrapper.append(textArea);
+    fakeTextArea = wrapper;
+    rightSideBar.append(fakeTextArea);
 }
 
 function getResetStyle() {
