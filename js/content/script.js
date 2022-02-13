@@ -147,7 +147,7 @@ function getPopupStyle() {
     const style = document.createElement("style");
     style.setAttribute("type", "text/css");
     style.innerText =
-        "#containerdiv { padding: 0; } #textchat { border-radius: 0; } #textchat-input { left: 0; padding: 5px; box-sizing: border-box; } #textchat-input textarea { width: 100% !important; height: 60px; box-sizing: border-box; }";
+        "#containerdiv { padding: 0; } #textchat { border-radius: 0; } #textchat-input { position:absolute; left: 0; padding: 5px; box-sizing: border-box; } #textchat-input textarea { width: 100% !important; height: 60px; box-sizing: border-box; }";
     return style;
 }
 
