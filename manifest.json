@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Roll20 Popout Chat",
-    "version": "0.23",
+    "version": "0.24",
     "description": "Pops out Roll20's chat window.",
     "content_scripts": [
         {
